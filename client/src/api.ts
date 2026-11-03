@@ -84,11 +84,17 @@ export interface StreamHandlers {
  * (fetch + ReadableStream, vì EventSource gốc không hỗ trợ POST body).
  */
 export async function sendMessageStream(sessionId: string, content: string, handlers: StreamHandlers) {
-  const res = await fetch(`${BASE}/sessions/${sessionId}/messages`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content }),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}/sessions/${sessionId}/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+  } catch {
+    handlers.onError("Mất kết nối — đang thử kết nối lại");
+    return;
+  }
 
   if (!res.ok || !res.body) {
     const body = await res.json().catch(() => ({ error: res.statusText }));
@@ -99,36 +105,53 @@ export async function sendMessageStream(sessionId: string, content: string, hand
   const reader = res.body.getReader();
   const decoder = new TextDecoder();
   let buffer = "";
+  let terminated = false;
 
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+  try {
+    while (!terminated) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
 
-    let sepIndex;
-    while ((sepIndex = buffer.indexOf("\n\n")) !== -1) {
-      const rawEvent = buffer.slice(0, sepIndex);
-      buffer = buffer.slice(sepIndex + 2);
-      parseSseEvent(rawEvent, handlers);
+      let sepIndex;
+      while ((sepIndex = buffer.indexOf("\n\n")) !== -1) {
+        const rawEvent = buffer.slice(0, sepIndex);
+        buffer = buffer.slice(sepIndex + 2);
+        if (parseSseEvent(rawEvent, handlers)) terminated = true;
+      }
     }
+  } catch {
+    handlers.onError("Mất kết nối — đang thử kết nối lại");
+    return;
+  }
+
+  if (!terminated) {
+    // Kết nối đóng giữa chừng mà chưa nhận được event "done"/"error" (PRD §4.2)
+    handlers.onError("Mất kết nối khi đang trả lời");
   }
 }
 
-function parseSseEvent(raw: string, handlers: StreamHandlers) {
+/** Trả về true nếu đây là event kết thúc stream (done/error). */
+function parseSseEvent(raw: string, handlers: StreamHandlers): boolean {
   let eventName = "message";
   let data = "";
   for (const line of raw.split("\n")) {
     if (line.startsWith("event:")) eventName = line.slice(6).trim();
     else if (line.startsWith("data:")) data += line.slice(5).trim();
   }
-  if (!data) return;
+  if (!data) return false;
 
   const parsed = JSON.parse(data);
   if (eventName === "done") {
     handlers.onDone(parsed.message as MessageDto);
-  } else if (eventName === "error") {
+    return true;
+  }
+  if (eventName === "error") {
     handlers.onError(parsed.error as string);
-  } else if (typeof parsed.token === "string") {
+    return true;
+  }
+  if (typeof parsed.token === "string") {
     handlers.onToken(parsed.token);
   }
+  return false;
 }

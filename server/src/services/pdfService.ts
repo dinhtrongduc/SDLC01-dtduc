@@ -1,3 +1,10 @@
+import path from "path";
+import { pathToFileURL } from "url";
+
+const STANDARD_FONT_DATA_URL = pathToFileURL(
+  path.join(require.resolve("pdfjs-dist/package.json"), "..", "standard_fonts") + path.sep
+).href;
+
 export class ScanPdfError extends Error {
   constructor() {
     super("Không thể đọc nội dung văn bản từ file này (có thể là bản scan ảnh).");
@@ -23,6 +30,8 @@ export async function parsePdfPages(buffer: Buffer): Promise<{ pages: string[]; 
     useWorkerFetch: false,
     isEvalSupported: false,
     verbosity: 0,
+    standardFontDataUrl: STANDARD_FONT_DATA_URL,
+    useSystemFonts: true,
   });
 
   const doc = await loadingTask.promise;
