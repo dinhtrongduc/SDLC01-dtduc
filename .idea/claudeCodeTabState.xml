@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ClaudeCodeTabState">
+    <option name="tabSessions">
+      <map>
+        <entry key="0">
+          <value>
+            <TabSessionState>
+              <option name="projectPath" value="C:\Users\ADMIN\OneDrive\Desktop\Project_Claude\SDLC01-dtduc" />
+              <option name="provider" value="claude" />
+              <option name="sessionId" value="44b3a197-c391-4fe5-9c84-6279abefb126" />
+              <option name="cwd" value="C:\Users\ADMIN\OneDrive\Desktop\Project_Claude\SDLC01-dtduc" />
+              <option name="model" value="claude-sonnet-5[1m]" />
+              <option name="permissionMode" value="default" />
+            </TabSessionState>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

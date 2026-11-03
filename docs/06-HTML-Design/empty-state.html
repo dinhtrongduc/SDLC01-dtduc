@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DocuChat AI — Empty State Mockup</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>DocuChat AI</h1>
+  <span class="user-chip">Linh · BD/Sales · Workspace mới</span>
+</header>
+
+<div class="app-layout">
+
+  <aside class="doc-panel">
+    <div class="dropzone">
+      <strong>Kéo-thả file PDF vào đây</strong>
+      Hoặc bấm để chọn file (tối đa 50MB/file)
+    </div>
+
+    <div class="empty-state">
+      📄<br/>
+      Chưa có tài liệu nào.<br/>
+      Upload tài liệu PDF đầu tiên để bắt đầu hỏi đáp.
+    </div>
+  </aside>
+
+  <main class="chat-panel">
+    <div class="chat-messages">
+      <div class="chat-empty">
+        Upload ít nhất 1 tài liệu PDF ở cột bên trái để bắt đầu đặt câu hỏi.
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <input type="text" placeholder="Đặt câu hỏi về tài liệu đã upload..." disabled title="Upload ít nhất 1 tài liệu PDF ở trạng thái Sẵn sàng để bắt đầu" />
+        <button disabled>Gửi</button>
+      </div>
+      <div class="input-hint">Ô chat sẽ được kích hoạt khi có ít nhất 1 tài liệu ở trạng thái "Sẵn sàng".</div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

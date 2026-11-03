@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>DocuChat AI — UI Mockup</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="app-header">
+  <h1>DocuChat AI</h1>
+  <span class="user-chip">Linh · BD/Sales · Workspace: Hợp đồng Q4</span>
+</header>
+
+<div class="app-layout">
+
+  <!-- ===== Cột trái: Upload + danh sách tài liệu ===== -->
+  <aside class="doc-panel">
+    <div class="dropzone" id="dropzone">
+      <strong>Kéo-thả file PDF vào đây</strong>
+      Hoặc bấm để chọn file (tối đa 50MB/file)
+    </div>
+
+    <ul class="doc-list">
+      <li class="doc-item">
+        <div class="doc-name">Hop_dong_A.pdf</div>
+        <div class="doc-meta">12 trang · 3.2 MB</div>
+        <span class="status-badge ready">● Sẵn sàng</span>
+      </li>
+
+      <li class="doc-item">
+        <div class="doc-name">Bao_gia_B.pdf</div>
+        <div class="doc-meta">5 trang · 1.1 MB</div>
+        <span class="status-badge processing"><span class="spinner"></span> Đang xử lý...</span>
+      </li>
+
+      <li class="doc-item">
+        <div class="doc-name">De_xuat_scan.pdf</div>
+        <div class="doc-meta">8 trang · 4.8 MB</div>
+        <span class="status-badge failed">⚠ Lỗi xử lý</span>
+        <div class="error-msg">Không thể đọc nội dung văn bản từ file này (có thể là bản scan ảnh). Thử file khác hoặc liên hệ hỗ trợ.</div>
+        <div class="doc-actions">
+          <button>Thử lại</button>
+          <button>Xóa</button>
+        </div>
+      </li>
+
+      <li class="doc-item">
+        <div class="doc-name">Ho_so_doi_tac.pdf</div>
+        <div class="doc-meta">0 MB · đang gửi lên</div>
+        <span class="status-badge uploading"><span class="spinner"></span> Đang tải lên... 64%</span>
+      </li>
+    </ul>
+
+    <!-- Empty state (ẩn mặc định trong demo này vì đã có tài liệu minh họa ở trên) -->
+    <!--
+    <div class="empty-state">
+      Chưa có tài liệu nào. Upload tài liệu PDF đầu tiên để bắt đầu hỏi đáp.
+    </div>
+    -->
+  </aside>
+
+  <!-- ===== Cột phải: Chat ===== -->
+  <main class="chat-panel">
+    <div class="chat-banner" id="connBanner">Mất kết nối — đang thử kết nối lại...</div>
+
+    <div class="chat-messages">
+      <div class="msg-row user">
+        <div class="bubble">Hợp đồng A và báo giá B có khác gì nhau về điều khoản thanh toán không?</div>
+      </div>
+
+      <div class="msg-row ai">
+        <div>
+          <div class="bubble">
+            Theo Hop_dong_A.pdf (tr.3), điều khoản thanh toán là trả trước 30% và phần còn lại sau khi nghiệm thu.
+            Trong khi đó Bao_gia_B.pdf (tr.1) lại nêu thanh toán 100% ngay khi ký hợp đồng.
+          </div>
+          <div class="citations">
+            <span class="citation-chip" onclick="openCitation('Hop_dong_A.pdf', 3)">📄 Hop_dong_A.pdf · tr.3</span>
+            <span class="citation-chip" onclick="openCitation('Bao_gia_B.pdf', 1)">📄 Bao_gia_B.pdf · tr.1</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="msg-row user">
+        <div class="bubble">Vậy bảo hành sản phẩm trong bao lâu?</div>
+      </div>
+
+      <div class="msg-row ai no-answer">
+        <div class="bubble">Tôi không tìm thấy thông tin này trong các tài liệu đã cung cấp.</div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chat-input-row">
+        <input type="text" placeholder="Đặt câu hỏi về tài liệu đã upload..." />
+        <button>Gửi</button>
+      </div>
+      <div class="input-hint">Tip: bạn có thể hỏi xuyên nhiều tài liệu cùng lúc, ví dụ "so sánh điều khoản thanh toán giữa hợp đồng A và B".</div>
+    </div>
+  </main>
+</div>
+
+<!-- ===== Overlay: PDF viewer khi click trích dẫn ===== -->
+<div class="overlay" id="citationOverlay">
+  <div class="pdf-panel">
+    <div class="pdf-panel-header">
+      <strong id="citationTitle">Hop_dong_A.pdf — Trang 3</strong>
+      <button onclick="closeCitation()">✕</button>
+    </div>
+    <div class="pdf-page-mock" id="citationBody">
+      ... Bên B có trách nhiệm thanh toán theo tiến độ sau:
+      <mark>trả trước 30% giá trị hợp đồng ngay sau khi ký, phần còn lại 70% thanh toán trong vòng 7 ngày kể từ ngày nghiệm thu bàn giao</mark>.
+      Mọi khoản thanh toán chậm trễ quá 15 ngày sẽ áp dụng lãi suất phạt theo quy định tại Điều 8...
+    </div>
+  </div>
+</div>
+
+<script>
+  function openCitation(fileName, page) {
+    document.getElementById('citationTitle').textContent = fileName + ' — Trang ' + page;
+    document.getElementById('citationOverlay').classList.add('show');
+  }
+  function closeCitation() {
+    document.getElementById('citationOverlay').classList.remove('show');
+  }
+</script>
+
+</body>
+</html>
